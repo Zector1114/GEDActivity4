@@ -5,17 +5,23 @@ using System.Collections.Generic;
 
 public class CommandInvoker
 {
-    private static Stack<Command> _undoStack = new Stack<Command>();
-    private static Stack<Command> _redoStack = new Stack<Command>();
+    private Stack<Command> _undoStack;
+    private Stack<Command> _redoStack;
 
-    public static void ExecuteCommand(Command command)
+    public CommandInvoker()
     {
-        command.Execute();
-        _undoStack.Push(command);
-        _redoStack.Clear();
+        _undoStack = new Stack<Command>();
+        _redoStack = new Stack<Command>();
     }
 
-    public static void UndoCommand()
+    public void ExecuteCommand(Command command)
+    {
+        _undoStack.Push(command);
+        _redoStack.Clear();
+        command.Execute();
+    }
+
+    public void UndoCommand()
     {
         if (_undoStack.Count > 0)
         {
@@ -25,7 +31,7 @@ public class CommandInvoker
         }
     }
 
-    public static void RedoCommand()
+    public void RedoCommand()
     {
         if (_redoStack.Count > 0)
         {
@@ -33,5 +39,11 @@ public class CommandInvoker
             _undoStack.Push(activeCommand);
             activeCommand.Execute();
         }
+    }
+
+    public void ClearCommand()
+    {
+        _undoStack.Clear();
+        _redoStack.Clear();
     }
 }
